@@ -9,7 +9,7 @@ from validation import validate
 def main(train_flag, evaluate_val, save_imgs):
     normalize_data = False
     depth = True
-    ckpt = None#'checkpoint/92%.pth'
+    ckpt = 'checkpoint/best_checkpoints/ckpt_2.pth'
     end_epoch = 100
 
     if train_flag:
@@ -45,7 +45,7 @@ def main(train_flag, evaluate_val, save_imgs):
 
 
 if __name__ == "__main__":
-    train_flag = True
+    train_flag = False
     evaluate_val = True
     save_imgs = True
 
