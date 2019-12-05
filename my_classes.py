@@ -149,7 +149,7 @@ class RandomCrop(object):
         self.size = size
 
     def __call__(self, sample):
-        if np.random.random() < 12:
+        if np.random.random() < 0.5:
             image, grid = sample['image'], sample['grid']
             rc = transforms.RandomCrop((int(image.shape[1] * self.size), int(image.shape[2] * self.size)))
             im_grid = torch.stack((image[0], grid[0]))
@@ -169,7 +169,7 @@ class RandomCrop(object):
 
 class HorizontalFlip(object):
     def __call__(self, sample):
-        if np.random.random() < 12:
+        if np.random.random() < 0.5:
             image = sample['image']
             grid = sample['grid']
             sample['image'] = torch.flip(image, [-1])
