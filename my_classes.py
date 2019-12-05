@@ -88,7 +88,7 @@ class CornersDataset(Dataset):
             image = image / image.max()
             edges = transforms.ToTensor()(transforms.ToPILImage()(image[0]).convert('L').filter(ImageFilter.FIND_EDGES))
             contours = transforms.ToTensor()(transforms.ToPILImage()(image[0]).convert('L').filter(ImageFilter.CONTOUR))
-            image = torch.stack((image[0], edges[0], contours[0]))
+            image = torch.stack((image[0], image[0], image[0]))
 
         grid = transforms.ToTensor()(gaussian(image[0], corners, target_size=image[0].size())[0]).type(torch.float32)
 
@@ -287,12 +287,12 @@ def init_model_and_dataset(depth, directory, normalize_data, lr=5e-6, weight_dec
 
     # define loss function (criterion) and optimizer
     criterion = JointsMSELoss().cuda()
-    optimizer = torch.optim.Adam(model.parameters(), lr, weight_decay=weight_decay)
+    optimizer = torch.optim.RMSprop(model.parameters(), lr, weight_decay=weight_decay)
 
-    '''checkpoint = torch.load("checkpoint/hg_s2_b1/model_best.pth.tar")
+    checkpoint = torch.load("checkpoint/hg_s2_b1/model_best.pth.tar")
 
     model.load_state_dict(checkpoint['state_dict'])
-    optimizer.load_state_dict(checkpoint['optimizer'])'''
+    optimizer.load_state_dict(checkpoint['optimizer'])
 
     model = nn.Sequential(model, nn.Conv2d(16, 1, kernel_size=1).cuda())
 

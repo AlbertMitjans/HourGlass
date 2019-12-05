@@ -5,11 +5,13 @@ from my_classes import init_model_and_dataset
 from train import train
 from validation import validate
 
+from scipy import ndimage
+
 
 def main(train_flag, evaluate_val, save_imgs):
     normalize_data = False
     depth = True
-    ckpt = 'checkpoint/best_checkpoints/ckpt_2.pth'
+    ckpt = None #'checkpoint/best_checkpoints/ckpt_2.pth'
     end_epoch = 100
 
     if train_flag:
@@ -45,7 +47,7 @@ def main(train_flag, evaluate_val, save_imgs):
 
 
 if __name__ == "__main__":
-    train_flag = False
+    train_flag = True
     evaluate_val = True
     save_imgs = True
 
