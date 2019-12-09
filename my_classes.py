@@ -86,9 +86,6 @@ class CornersDataset(Dataset):
             image = Image.open(img_name)
             image = transforms.ToTensor()(image).type(torch.float32)
             image = image / image.max()
-            edges = transforms.ToTensor()(transforms.ToPILImage()(image[0]).convert('L').filter(ImageFilter.FIND_EDGES))
-            contours = transforms.ToTensor()(transforms.ToPILImage()(image[0]).convert('L').filter(ImageFilter.CONTOUR))
-            image = torch.stack((image[0], image[0], image[0]))
 
         grid = transforms.ToTensor()(gaussian(image[0], corners, target_size=image[0].size())[0]).type(torch.float32)
 
@@ -97,6 +94,13 @@ class CornersDataset(Dataset):
         if not self.validation:
             if self.transform:
                 sample = self.transform(sample)
+
+        if self.depth:
+            image = sample['image']
+            edges = transforms.ToTensor()(transforms.ToPILImage()(image[0]).convert('L').filter(ImageFilter.FIND_EDGES))
+            contours = transforms.ToTensor()(transforms.ToPILImage()(image[0]).convert('L').filter(ImageFilter.CONTOUR))
+            image = torch.stack((image[0], edges[0], image[0]))
+            sample['image'] = image
 
         sample['image'] = pad_to_square(sample['image'])
         sample['grid'] = pad_to_square(sample['grid'])
@@ -150,18 +154,15 @@ class RandomCrop(object):
 
     def __call__(self, sample):
         if np.random.random() < 0.5:
-            image, grid = sample['image'], sample['grid']
+            image, grid = sample['image'], sample['grid']/sample['grid'].max()
             rc = transforms.RandomCrop((int(image.shape[1] * self.size), int(image.shape[2] * self.size)))
             im_grid = torch.stack((image[0], grid[0]))
             crop_im_grid = rc(transforms.ToPILImage()(im_grid))
             crop_image, crop_grid = Image.Image.split(crop_im_grid)
             res_image = crop_image.resize((image.shape[2], image.shape[1]))
             grid = transforms.ToTensor()(crop_grid.resize((image.shape[2], image.shape[1])))
-            edges = transforms.ToTensor()(res_image.convert('L').filter(ImageFilter.FIND_EDGES))
-            contours = transforms.ToTensor()(res_image.convert('L').filter(ImageFilter.CONTOUR))
-            image = torch.stack((transforms.ToTensor()(res_image)[0], edges[0], contours[0]))
 
-            sample['image'] = image
+            sample['image'] = transforms.ToTensor()(res_image)
             sample['grid'] = grid
 
         return sample

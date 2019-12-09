@@ -11,13 +11,12 @@ from scipy import ndimage
 def main(train_flag, evaluate_val, save_imgs):
     normalize_data = False
     depth = True
-    ckpt = 'checkpoint/best_checkpoints/ckpt_4.pth'
+    ckpt = None#'checkpoint/best_checkpoints/ckpt_2.pth'
     end_epoch = 100
 
     if train_flag:
         freeze = False
-        single_grid = True
-        train(ckpt, freeze, depth, normalize_data, end_epoch, single_grid)
+        train(ckpt, freeze, depth, normalize_data, end_epoch)
 
     if not train_flag:
         batch_size = 1

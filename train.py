@@ -11,7 +11,7 @@ from my_classes import init_model_and_dataset, adjust_learning_rate, AverageMete
 from utils.logger import Logger
 
 
-def train(ckpt, freeze, depth, normalize_data, end_epoch, single_grid):
+def train(ckpt, freeze, depth, normalize_data, end_epoch):
     batch_size = 1
     num_workers = 0
     lr = 5e-4
@@ -31,6 +31,8 @@ def train(ckpt, freeze, depth, normalize_data, end_epoch, single_grid):
     model, train_dataset, val_dataset, criterion_grid, optimizer = init_model_and_dataset(depth, directory,
                                                                                           normalize_data, lr,
                                                                                           weight_decay, momentum)
+    val_dataset.evaluate()
+
     # load the pretrained network
     if ckpt is not None:
         checkpoint = torch.load(ckpt)
@@ -82,10 +84,6 @@ def train(ckpt, freeze, depth, normalize_data, end_epoch, single_grid):
             loss = criterion_grid(output, grid, 0)
 
             # measure accuracy and record loss
-            show = False
-            if data_idx * grid.size(0) % 50 == 0:
-                show = True
-
             accuracy(corners, output.data, grid, input, end_epoch, epoch, train_recall, train_precision, depth=depth)
             train_loss.update(loss.item())
 
@@ -100,12 +98,10 @@ def train(ckpt, freeze, depth, normalize_data, end_epoch, single_grid):
 
             if data_idx % print_freq == 0 and data_idx != 0:
                 print('Epoch: [{0}][{1}/{2}]\t'
-                # 'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-                # 'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
                       'Loss.avg: {loss.avg:.4f}\t'
                       'Recall(%): {top1:.3f}\t'
                       'Precision num. corners (%): ({top2:.3f}, {top3:.3f}, {top4:.3f}, {top5:.3f})\t'.format(
-                    epoch, data_idx, len(train_loader), batch_time=batch_time, data_time=data_time, loss=train_loss,
+                    epoch, data_idx, len(train_loader), loss=train_loss,
                     top1=train_recall.avg * 100, top2=train_precision[0].avg * 100, top3=train_precision[1].avg * 100,
                     top4=train_precision[2].avg * 100, top5=train_precision[3].avg * 100))
 
@@ -113,7 +109,7 @@ def train(ckpt, freeze, depth, normalize_data, end_epoch, single_grid):
             # evaluate on validation set
             print('Train set:  ')
 
-            t_recall, t_precision = validate(train_loader, model, 100, epoch)
+            t_recall, t_precision = validate(train_loader, model, end_epoch, epoch)
             print('Validation set:  ')
             e_recall, e_precision = validate(val_loader, model, end_epoch, epoch)
 
