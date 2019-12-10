@@ -8,6 +8,8 @@ from torchvision.transforms import transforms
 from my_classes import pad_to_square
 import numpy as np
 import skimage.draw as draw
+from skimage.feature import peak_local_max
+from scipy.ndimage.measurements import center_of_mass, label
 
 from my_classes import AverageMeter, accuracy, init_model_and_dataset
 from utils.img_utils import compute_gradient
@@ -37,33 +39,34 @@ def validate(val_loader, model, end_epoch, epoch=0, save_imgs=False):
         if save_imgs:
             image = Image.open('/home/amitjans/Desktop/Hourglass/data/rgb/' + data['img_name'][0] + '.png')
             image = pad_to_square(transforms.ToTensor()(image))
-            gradient = compute_gradient(input)
-            grad_values = []
+            gradient = compute_gradient(input[0][0].cpu().detach())
+            grad_out = []
 
             for idx, (i, j) in enumerate(max_out):
-                cx, cy = draw.circle_perimeter(i, j, 5, shape=output.shape)
+                cx, cy = draw.circle_perimeter(i, j, 8, shape=image[0].shape)
                 if idx < 4:
-                    grad_values.append(gradient[i - 5:i + 5, j - 5:j + 5].sum())
+                    grad_out.append(gradient[cx.min():cx.max(), cy.min():cy.max()].sum())
                     image[:, cx, cy] = 0
                     if idx == 3:
                         image[0, cx, cy] = 1.
                         image[1, cx, cy] = 1.
                     else:
-                        corners[idx, cx, cy] = 1.
+                        image[idx, cx, cy] = 1.
 
                 else:
-                    corners[:, cx, cy] = 1.
+                    image[:, cx, cy] = 1.
 
             txt = ''
-            max_colors = ['1st (red)', '2nd (green)', '3rd (blue)', '4th (yellow)']
-            for idx, val in enumerate(grad_values):
-                txt += max_colors[idx] + '---> grad = ' + str(val) + '\n'
+            colors_out = ['1st (red)', '2nd (green)', '3rd (blue)', '4th (yellow)']
+            for idx, val in enumerate(torch.Tensor(grad_out)):
+                txt += colors_out[idx] + '---> grad = {top1:.2f}\n'.format(top1=val.item())
             fig, ax = plt.subplots(1, 2)
+            fig.set_size_inches((15, 8))
             plt.ioff()
             ax[1].imshow(transforms.ToPILImage()(image))
-            plt.scatter(max_out[:, 1], max_out[:, 0], marker='o', c='r', s=2)
+            #plt.scatter(max_out[:, 1], max_out[:, 0], marker='o', c='r', s=7)
             ax[0].imshow(output.cpu().detach().numpy()[0][0], cmap='gray')
-            plt.figtext(0.44, 0.25, txt)
+            plt.figtext(0.45, 0.03, txt)
             plt.savefig('/home/amitjans/Desktop/Hourglass/output/' + data['img_name'][0] + '.png')
             plt.close('all')
 

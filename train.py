@@ -15,8 +15,8 @@ def train(ckpt, freeze, depth, normalize_data, end_epoch):
     batch_size = 1
     num_workers = 0
     lr = 5e-4
-    momentum = 0.9
-    weight_decay = 0.0005
+    momentum = 0
+    weight_decay = 0
 
     directory = '/home/amitjans/Desktop/Hourglass/data/'
     start_epoch = 0
