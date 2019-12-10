@@ -11,8 +11,8 @@ import skimage.draw as draw
 from skimage.feature import peak_local_max
 from scipy.ndimage.measurements import center_of_mass, label
 
-from my_classes import AverageMeter, accuracy, init_model_and_dataset
-from utils.img_utils import compute_gradient
+from my_classes import AverageMeter, accuracy
+from utils.img_utils import compute_gradient, save_img
 
 
 def validate(val_loader, model, end_epoch, epoch=0, save_imgs=False):
@@ -37,38 +37,12 @@ def validate(val_loader, model, end_epoch, epoch=0, save_imgs=False):
         max_out = accuracy(corners, output.data, target, input, end_epoch, epoch, eval_recall, eval_precision)
 
         if save_imgs:
-            image = Image.open('/home/amitjans/Desktop/Hourglass/data/rgb/' + data['img_name'][0] + '.png')
-            image = pad_to_square(transforms.ToTensor()(image))
-            gradient = compute_gradient(input[0][0].cpu().detach())
-            grad_out = []
-
-            for idx, (i, j) in enumerate(max_out):
-                cx, cy = draw.circle_perimeter(i, j, 8, shape=image[0].shape)
-                if idx < 4:
-                    grad_out.append(gradient[cx.min():cx.max(), cy.min():cy.max()].sum())
-                    image[:, cx, cy] = 0
-                    if idx == 3:
-                        image[0, cx, cy] = 1.
-                        image[1, cx, cy] = 1.
-                    else:
-                        image[idx, cx, cy] = 1.
-
-                else:
-                    image[:, cx, cy] = 1.
-
-            txt = ''
-            colors_out = ['1st (red)', '2nd (green)', '3rd (blue)', '4th (yellow)']
-            for idx, val in enumerate(torch.Tensor(grad_out)):
-                txt += colors_out[idx] + '---> grad = {top1:.2f}\n'.format(top1=val.item())
-            fig, ax = plt.subplots(1, 2)
-            fig.set_size_inches((15, 8))
-            plt.ioff()
-            ax[1].imshow(transforms.ToPILImage()(image))
-            #plt.scatter(max_out[:, 1], max_out[:, 0], marker='o', c='r', s=7)
-            ax[0].imshow(output.cpu().detach().numpy()[0][0], cmap='gray')
-            plt.figtext(0.45, 0.03, txt)
-            plt.savefig('/home/amitjans/Desktop/Hourglass/output/' + data['img_name'][0] + '.png')
-            plt.close('all')
+            # rgb image
+            rgb = Image.open('/home/amitjans/Desktop/Hourglass/data/rgb/' + data['img_name'][0] + '.png')
+            rgb = pad_to_square(transforms.ToTensor()(rgb))[:, :-1, :-1]
+            # gradient plot
+            gradient = compute_gradient(input[0][0].cpu().detach().numpy())
+            save_img(rgb, output.cpu().detach().numpy()[0][0], gradient, data['img_name'][0])
 
         # measure elapsed time
         batch_time.update(time.time() - end)

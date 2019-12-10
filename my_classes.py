@@ -99,7 +99,7 @@ class CornersDataset(Dataset):
             image = sample['image']
             edges = transforms.ToTensor()(transforms.ToPILImage()(image[0]).convert('L').filter(ImageFilter.FIND_EDGES))
             contours = transforms.ToTensor()(transforms.ToPILImage()(image[0]).convert('L').filter(ImageFilter.CONTOUR))
-            image = torch.stack((image[0], image[0], image[0]))
+            image = torch.stack((image[0], edges[0], image[0]))
             sample['image'] = image
 
         sample['image'] = pad_to_square(sample['image'])
