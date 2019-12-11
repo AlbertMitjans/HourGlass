@@ -12,7 +12,7 @@ from skimage.feature import peak_local_max
 from scipy.ndimage.measurements import center_of_mass, label
 
 from my_classes import AverageMeter, accuracy
-from utils.img_utils import compute_gradient, save_img
+from utils.img_utils import compute_gradient, save_img, plot_gradient
 
 
 def validate(val_loader, model, end_epoch, epoch=0, save_imgs=False):
@@ -34,14 +34,19 @@ def validate(val_loader, model, end_epoch, epoch=0, save_imgs=False):
         output = model(input)
 
         # measure accuracy
-        max_out = accuracy(corners, output.data, target, input, end_epoch, epoch, eval_recall, eval_precision)
+        accuracy(corners, output.data, target, input, end_epoch, epoch, eval_recall, eval_precision)
 
         if save_imgs:
             # rgb image
             rgb = Image.open('/home/amitjans/Desktop/Hourglass/data/rgb/' + data['img_name'][0] + '.png')
-            rgb = pad_to_square(transforms.ToTensor()(rgb))[:, :-1, :-1]
+            rgb = transforms.ToTensor()(rgb)[:, :-1, :-1]
+            depth = input[0][0][int((input.shape[2] - rgb.shape[1]) / 2): int((input.shape[2] + rgb.shape[1]) / 2)][
+                    int((input.shape[3] - rgb.shape[2]) / 2): int((input.shape[3] + rgb.shape[2]) / 2)]
+            rgb = pad_to_square(rgb)
             # gradient plot
-            gradient = compute_gradient(input[0][0].cpu().detach().numpy())
+            gradient = compute_gradient(depth.cpu().detach().numpy())
+            gradient = pad_to_square(gradient.expand(3, -1, -1))[0]
+            plot_gradient(gradient, output.cpu().detach().numpy()[0][0], data['img_name'][0])
             save_img(rgb, output.cpu().detach().numpy()[0][0], gradient, data['img_name'][0])
 
         # measure elapsed time
@@ -52,6 +57,7 @@ def validate(val_loader, model, end_epoch, epoch=0, save_imgs=False):
           .format(top1=eval_recall.avg * 100, top2=eval_precision[0].avg * 100, top3=eval_precision[1].avg * 100,
                   top4=eval_precision[2].avg * 100, top5=eval_precision[3].avg * 100))
 
-    global_precision = np.array([eval_precision[0].avg, eval_precision[1].avg, eval_precision[2].avg, eval_precision[3].avg])
+    global_precision = np.array(
+        [eval_precision[0].avg, eval_precision[1].avg, eval_precision[2].avg, eval_precision[3].avg])
 
     return eval_recall.avg, global_precision
