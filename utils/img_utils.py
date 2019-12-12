@@ -51,6 +51,8 @@ def corner_mask(output, gradient):
                 corners[1, cx, cy] = 1.
             else:
                 corners[idx, cx, cy] = 1.
+        else:
+            corners[:, cx, cy] = 1.
 
     return corners, grad_values, max_coord
 

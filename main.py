@@ -11,7 +11,7 @@ from scipy import ndimage
 def main(train_flag, evaluate_val, save_imgs):
     normalize_data = False
     depth = True
-    ckpt = 'checkpoint/best_checkpoints/ckpt_3.pth'
+    ckpt = None#'checkpoint/hg_ckpt_97.pth'
     end_epoch = 200
 
     if train_flag:
@@ -42,12 +42,13 @@ def main(train_flag, evaluate_val, save_imgs):
         val_loader = torch.utils.data.DataLoader(transformed_dataset, batch_size=batch_size, shuffle=False,
                                                  num_workers=num_workers, pin_memory=True)
 
-        validate(val_loader, model, end_epoch, save_imgs=save_imgs)
+        validate(val_loader, model, end_epoch, save_imgs=save_imgs, plt_gradient=plt_gradient)
 
 
 if __name__ == "__main__":
-    train_flag = False
+    train_flag = True
     evaluate_val = True
     save_imgs = True
+    plt_gradient = False
 
     main(train_flag, evaluate_val, save_imgs)

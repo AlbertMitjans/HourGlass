@@ -15,7 +15,7 @@ from my_classes import AverageMeter, accuracy
 from utils.img_utils import compute_gradient, save_img, plot_gradient
 
 
-def validate(val_loader, model, end_epoch, epoch=0, save_imgs=False):
+def validate(val_loader, model, end_epoch, epoch=0, save_imgs=False, plt_gradient=False):
     batch_time = AverageMeter()
     eval_recall = AverageMeter()
     eval_precision = np.array([AverageMeter(), AverageMeter(), AverageMeter(), AverageMeter()])
@@ -46,7 +46,8 @@ def validate(val_loader, model, end_epoch, epoch=0, save_imgs=False):
             # gradient plot
             gradient = compute_gradient(depth.cpu().detach().numpy())
             gradient = pad_to_square(gradient.expand(3, -1, -1))[0]
-            plot_gradient(gradient, output.cpu().detach().numpy()[0][0], data['img_name'][0])
+            if plt_gradient:
+                plot_gradient(gradient, output.cpu().detach().numpy()[0][0], data['img_name'][0])
             save_img(rgb, output.cpu().detach().numpy()[0][0], gradient, data['img_name'][0])
 
         # measure elapsed time
