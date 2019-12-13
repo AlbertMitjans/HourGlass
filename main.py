@@ -11,7 +11,7 @@ from scipy import ndimage
 def main(train_flag, evaluate_val, save_imgs):
     normalize_data = False
     depth = True
-    ckpt = None#'checkpoint/hg_ckpt_97.pth'
+    ckpt = None#'checkpoint/hg_ckpt_74.pth'
     end_epoch = 200
 
     if train_flag:
