@@ -3,6 +3,7 @@ Hourglass network inserted in the pre-activated Resnet
 Use lr=0.01 for current version
 (c) YANG, Wei
 '''
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.transforms.functional as func
@@ -182,7 +183,9 @@ class HourglassNet(nn.Module):
                 score_ = self.score_[i](score)
                 x = x + fc_ + score_
 
-        return out[-1]
+        out = torch.cat(out)
+
+        return out
 
 
 def hg(**kwargs):

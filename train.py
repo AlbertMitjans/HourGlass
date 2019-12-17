@@ -81,10 +81,11 @@ def train(ckpt, freeze, depth, normalize_data, end_epoch):
 
             # compute output
             output = model(input)
-            loss = criterion_grid(output, grid, 0)
+            output = (output[0].unsqueeze(0), output[1].unsqueeze(0))
+            loss = sum(criterion_grid(o, grid) for o in output)
 
             # measure accuracy and record loss
-            accuracy(corners, output.data, grid, input, end_epoch, epoch, train_recall, train_precision, depth=depth)
+            accuracy(corners, output[-1].data, grid, input, end_epoch, epoch, train_recall, train_precision, depth=depth)
             train_loss.update(loss.item())
 
             # compute gradient and do SGD step

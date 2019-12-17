@@ -32,9 +32,10 @@ def validate(val_loader, model, end_epoch, epoch=0, save_imgs=False, plt_gradien
 
         # compute output
         output = model(input)
+        output = (output[0].unsqueeze(0), output[1].unsqueeze(0))
 
         # measure accuracy
-        accuracy(corners, output.data, target, input, end_epoch, epoch, eval_recall, eval_precision)
+        accuracy(corners, output[-1].data, target, input, end_epoch, epoch, eval_recall, eval_precision)
 
         if save_imgs:
             # rgb image
@@ -47,8 +48,8 @@ def validate(val_loader, model, end_epoch, epoch=0, save_imgs=False, plt_gradien
             gradient = compute_gradient(depth.cpu().detach().numpy())
             gradient = pad_to_square(gradient.expand(3, -1, -1))[0]
             if plt_gradient:
-                plot_gradient(gradient, output.cpu().detach().numpy()[0][0], data['img_name'][0])
-            save_img(rgb, output.cpu().detach().numpy()[0][0], gradient, data['img_name'][0])
+                plot_gradient(gradient, output[-1].cpu().detach().numpy()[0][0], data['img_name'][0])
+            save_img(rgb, output[-1].cpu().detach().numpy()[0][0], gradient, data['img_name'][0])
 
         # measure elapsed time
         batch_time.update(time.time() - end)
