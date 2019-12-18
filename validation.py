@@ -31,8 +31,7 @@ def validate(val_loader, model, end_epoch, epoch=0, save_imgs=False, plt_gradien
         corners = data['corners']
 
         # compute output
-        output = model(input)
-        output = (output[0].unsqueeze(0), output[1].unsqueeze(0))
+        output = model(input).split(input.shape[0], dim=0)
 
         # measure accuracy
         accuracy(corners, output[-1].data, target, input, end_epoch, epoch, eval_recall, eval_precision)

@@ -91,15 +91,15 @@ class CornersDataset(Dataset):
 
         sample = {'image': image, 'grid': grid, 'img_name': img_number, 'corners': corners}
 
-        '''if not self.validation:
+        if not self.validation:
             if self.transform:
-                sample = self.transform(sample)'''
+                sample = self.transform(sample)
 
         if self.depth:
             image = sample['image']
             edges = transforms.ToTensor()(transforms.ToPILImage()(image[0]).convert('L').filter(ImageFilter.FIND_EDGES))
             contours = transforms.ToTensor()(transforms.ToPILImage()(image[0]).convert('L').filter(ImageFilter.CONTOUR))
-            image = torch.stack((image[0], image[0], image[0]))
+            image = torch.stack((image[0], edges[0], contours[0]))
             sample['image'] = image
 
         sample['image'] = pad_to_square(sample['image'])
@@ -290,7 +290,7 @@ def init_model_and_dataset(depth, directory, normalize_data, lr=5e-6, weight_dec
     criterion = JointsMSELoss().cuda()
     optimizer = torch.optim.RMSprop(model.parameters(), lr, weight_decay=weight_decay)
 
-    checkpoint = torch.load("checkpoint/hg_s2_b1/model_best.pth.tar")
+    checkpoint = torch.load("checkpoint/hg_s1_b1/model_best.pth.tar")
 
     model.load_state_dict(checkpoint['state_dict'])
     optimizer.load_state_dict(checkpoint['optimizer'])

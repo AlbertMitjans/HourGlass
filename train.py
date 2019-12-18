@@ -80,8 +80,7 @@ def train(ckpt, freeze, depth, normalize_data, end_epoch):
             corners = data['corners']
 
             # compute output
-            output = model(input)
-            output = (output[0].unsqueeze(0), output[1].unsqueeze(0))
+            output = model(input).split(input.shape[0], dim=0)
             loss = sum(criterion_grid(o, grid) for o in output)
 
             # measure accuracy and record loss
