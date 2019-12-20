@@ -71,7 +71,7 @@ def save_img(rgb, output, gradient, name):
     ax[1].axis('off')
     ax[1].set_title('Gradient')
     ax[1].scatter(max_coord[:, 1], max_coord[:, 0], marker='o', c='r', s=0.1)
-    ax[0].imshow(output, cmap='afmhot')
+    ax[0].imshow(output, cmap='afmhot', vmin=0, vmax=1)
     ax[1].imshow(gradient, cmap='gray')
     ax[2].imshow(image)
     txt = ''

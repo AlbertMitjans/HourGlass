@@ -21,7 +21,7 @@ def train(ckpt, freeze, depth, normalize_data, end_epoch):
     directory = '/home/amitjans/Desktop/Hourglass/data/'
     start_epoch = 0
     start_loss = 0
-    num_epochs = 200
+    num_epochs = 100
     print_freq = 100
     checkpoint_interval = 1
     evaluation_interval = 1
@@ -81,7 +81,7 @@ def train(ckpt, freeze, depth, normalize_data, end_epoch):
 
             # compute output
             output = model(input).split(input.shape[0], dim=0)
-            loss = sum(criterion_grid(o, grid) for o in output)
+            loss = sum(i*criterion_grid(o, grid) for i, o in enumerate(output))
 
             # measure accuracy and record loss
             accuracy(corners, output[-1].data, grid, input, end_epoch, epoch, train_recall, train_precision, depth=depth)

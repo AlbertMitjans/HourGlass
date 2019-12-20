@@ -9,9 +9,9 @@ from scipy import ndimage
 
 
 def main(train_flag, evaluate_val, save_imgs):
-    normalize_data = False
+    normalize_data = True
     depth = True
-    ckpt = None #'checkpoint/hg_ckpt_76.pth'
+    ckpt = None#'checkpoint/hg_ckpt_81.pth'
     end_epoch = 200
 
     if train_flag:

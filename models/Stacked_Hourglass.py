@@ -98,7 +98,7 @@ class Hourglass(nn.Module):
 class HourglassNet(nn.Module):
     '''Hourglass model from Newell et al ECCV 2016'''
 
-    def __init__(self, block, num_stacks=1, num_blocks=1, num_classes=16):
+    def __init__(self, block, num_stacks=2, num_blocks=1, num_classes=16):
 
         super(HourglassNet, self).__init__()
 

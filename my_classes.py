@@ -95,22 +95,15 @@ class CornersDataset(Dataset):
             if self.transform:
                 sample = self.transform(sample)
 
-        if self.depth:
-            image = sample['image']
-            edges = transforms.ToTensor()(transforms.ToPILImage()(image[0]).convert('L').filter(ImageFilter.FIND_EDGES))
-            contours = transforms.ToTensor()(transforms.ToPILImage()(image[0]).convert('L').filter(ImageFilter.CONTOUR))
-            image = torch.stack((image[0], edges[0], contours[0]))
-            sample['image'] = image
-
-        sample['image'] = pad_to_square(sample['image'])
-        sample['grid'] = pad_to_square(sample['grid'])
-
-        '''fig, ax = plt.subplots(1, 2)
+        fig, ax = plt.subplots(1, 2)
         ax[0].imshow(sample['grid'][0], cmap='gray')
         ax[1].imshow(sample['image'][0], cmap='gray')
         plt.show()
         plt.waitforbuttonpress()
-        plt.close('all')'''
+        plt.close('all')
+
+        sample['image'] = pad_to_square(sample['image'])
+        sample['grid'] = pad_to_square(sample['grid'])
 
         return sample
 
@@ -128,26 +121,6 @@ class Normalize(object):
         return self.__class__.__name__ + '(mean={0}, std={1})'.format(self.mean, self.std)
 
 
-class ToTensor(object):
-    def __init__(self, depth):
-        self.depth = depth
-
-    def __call__(self, sample):
-        image, grid = sample['image'], sample['grid']
-
-        # swap color axis because
-        # numpy image: H x W x C
-        # torch image: C X H X W
-
-        '''if self.depth:
-            image = torch.from_numpy(image).expand(1, image.shape[0], image.shape[1])'''
-        if not self.depth:
-            image = image.transpose((2, 0, 1))
-        sample['image'] = torch.from_numpy(image)
-        sample['grid'] = torch.from_numpy(grid)
-        return sample
-
-
 class RandomCrop(object):
     def __init__(self, size):
         self.size = size
@@ -162,8 +135,20 @@ class RandomCrop(object):
             res_image = crop_image.resize((image.shape[2], image.shape[1]))
             grid = transforms.ToTensor()(crop_grid.resize((image.shape[2], image.shape[1])))
 
-            sample['image'] = transforms.ToTensor()(res_image)
+            edges = transforms.ToTensor()(res_image.convert('L').filter(ImageFilter.FIND_EDGES))
+            contours = transforms.ToTensor()(res_image.convert('L').filter(ImageFilter.CONTOUR))
+            image = torch.stack((transforms.ToTensor()(res_image)[0], edges[0], contours[0]))
+
+            sample['image'] = image
             sample['grid'] = grid
+
+        else:
+            image = sample['image']
+            edges = transforms.ToTensor()(transforms.ToPILImage()(image[0]).convert('L').filter(ImageFilter.FIND_EDGES))
+            contours = transforms.ToTensor()(transforms.ToPILImage()(image[0]).convert('L').filter(ImageFilter.CONTOUR))
+            image = torch.stack((image[0], edges[0], contours[0]))
+
+            sample['image'] = image
 
         return sample
 
@@ -205,8 +190,8 @@ def show_corners(image, corners):
 def normalize(tensor, mean, std, inplace=False):
     image = tensor['image']
 
-    if not _is_tensor_image(image):
-        raise TypeError('tensor is not a torch image.')
+    '''if not _is_tensor_image(image):
+        raise TypeError('tensor is not a torch image.')'''
 
     if not inplace:
         image = image.clone()
@@ -290,7 +275,7 @@ def init_model_and_dataset(depth, directory, normalize_data, lr=5e-6, weight_dec
     criterion = JointsMSELoss().cuda()
     optimizer = torch.optim.RMSprop(model.parameters(), lr, weight_decay=weight_decay)
 
-    checkpoint = torch.load("checkpoint/hg_s1_b1/model_best.pth.tar")
+    checkpoint = torch.load("checkpoint/hg_s2_b1/model_best.pth.tar")
 
     model.load_state_dict(checkpoint['state_dict'])
     optimizer.load_state_dict(checkpoint['optimizer'])
@@ -311,9 +296,9 @@ def init_model_and_dataset(depth, directory, normalize_data, lr=5e-6, weight_dec
         normalize_image = Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 
         train_dataset = CornersDataset(root_dir=directory + 'train_dataset', end_file=end_file, depth=depth,
-                                       transform=transforms.Compose([normalize_image, random_crop, horizontal_flip]))
+                                       transform=transforms.Compose([random_crop, horizontal_flip, normalize_image]))
         val_dataset = CornersDataset(root_dir=directory + 'val_dataset', end_file=end_file, depth=depth,
-                                     transform=transforms.Compose([normalize_image, random_crop, horizontal_flip]))
+                                     transform=transforms.Compose([random_crop, horizontal_flip, normalize_image]))
     if not normalize_data:
         train_dataset = CornersDataset(root_dir=directory + 'train_dataset', end_file=end_file, depth=depth,
                                        transform=transforms.Compose([random_crop, horizontal_flip]))
@@ -328,74 +313,7 @@ def init_model_and_dataset(depth, directory, normalize_data, lr=5e-6, weight_dec
 ##############################################
 
 
-def distance_from_corner(target_shape, image, corners):
-    target = np.zeros(target_shape, dtype=int)
-    n = float(image.shape[0]) / float(target.shape[1])
-    m = float(image.shape[1]) / float(target.shape[2])
-    for i, (x, y) in enumerate(corners):
-        a = int(x / n)
-        b = int(y / m)
-        ax = n * (a + 1 / 2) - x
-        ay = (m * (b + 1 / 2)) - y
-
-        if x == 0 and y == 0:
-            target[3 * i, a, b] = 0
-        else:
-            target[3 * i, a, b] = 1
-            target[3 * i + 1, a, b] = ax
-            target[3 * i + 2, a, b] = ay
-
-    return target
-
-
-def corner_colors(target_shape, image, corners, colors):
-    target = np.zeros(target_shape[1:], dtype=int)
-    n = float(image.shape[0]) / float(target.shape[0])
-    m = float(image.shape[1]) / float(target.shape[1])
-    color_idx = {'red': 1, 'green': 2, 'yellow': 3, 'blue': 4}
-    for i, (x, y) in enumerate(corners):
-        a = int(x / n)
-        b = int(y / m)
-        target[a, b] = color_idx[colors[i]]
-
-    return target
-
-
-def red_color(corners, image):
-    target = np.array([0, 0])
-    if corners[0][0] and corners[0][1] != 0:
-        target = np.array([corners[0][0], corners[0][1]])
-
-    return target
-
-
-def number_red_images(corners):
-    red_images = 0
-    for (red, green, yellow, blue) in corners:
-        if np.all(red != 0):
-            red_images += 1
-
-    return 100 * float(red_images) / float(len(corners))
-
-
-def gaussian_red(image, corners, kernel=20, nsig=5, target_size=(1, 76, 124)):
-    target = np.zeros(target_size)
-    n = float(image.shape[0]) / float(target.shape[1])
-    m = float(image.shape[1]) / float(target.shape[2])
-    if np.all(corners[0] != 0):
-        a = int(corners[0, 0] / n)
-        b = int(corners[0, 1] / m)
-        x = np.linspace(-nsig, nsig, kernel + 1)
-        kern1d = np.diff(st.norm.cdf(x))
-        kern2d = np.outer(kern1d, kern1d)
-        ax = a - kern2d.shape[0] // 2
-        ay = b - kern2d.shape[1] // 2
-        paste(target[0], kern2d / kern2d.max(), (ax, ay))
-
-    return target
-
-
-def gaussian(image, corners, kernel=39, nsig=5, target_size=(304, 495)):
+def gaussian(image, corners, kernel=29, nsig=5, target_size=(304, 495)):
     target = np.zeros((4, target_size[0], target_size[1]))
     n = float(image.shape[0]) / float(target.shape[1])
     m = float(image.shape[1]) / float(target.shape[2])
@@ -415,24 +333,6 @@ def gaussian(image, corners, kernel=39, nsig=5, target_size=(304, 495)):
     return target
 
 
-def nearest_corner(image, corners, kernel=40, nsig=5, target_size=(1, 76, 124)):
-    target = np.zeros(target_size)
-    n = float(image.shape[0]) / float(target.shape[1])
-    m = float(image.shape[1]) / float(target.shape[2])
-    for i, (x, y) in enumerate(corners):
-        if x == corners[:, 0].max() and (x != 0 and y != 0):
-            a = int(x / n)
-            b = int(y / m)
-            x = np.linspace(-nsig, nsig, kernel + 1)
-            kern1d = np.diff(st.norm.cdf(x))
-            kern2d = np.outer(kern1d, kern1d)
-            ax = a - kern2d.shape[0] // 2
-            ay = b - kern2d.shape[1] // 2
-            paste(target[0], kern2d / kern2d.max(), (ax, ay))
-
-    return target
-
-
 def paste_slices(tup):
     pos, w, max_w = tup
     wall_min = max(pos, 0)
@@ -447,19 +347,6 @@ def paste(wall, block, loc):
     loc_zip = zip(loc, block.shape, wall.shape)
     wall_slices, block_slices = zip(*map(paste_slices, loc_zip))
     wall[wall_slices] = block[block_slices]
-
-
-def distance_from_max(output):
-    max = np.where(output == output.max())
-    max_middle = [max[0][int(max[0].size / 2)], max[1][int(max[1].size / 2)]]
-    distance = np.zeros(output.shape)
-    for i in range(output.shape[0]):
-        for j in range(output.shape[1]):
-            len = ((i - max_middle[0]) ** 2 + (j - max_middle[1]) ** 2) ** (1 / 2)
-            if len >= 30:
-                distance[i][j] = len * output[i, j]
-
-    return distance.sum()
 
 
 ###############################################
@@ -488,40 +375,6 @@ def accuracy(corners, output, target, input, end_epoch, epoch, global_recall, gl
             show_output(batch_unit, input, output, target, depth)
 
     return max_out
-
-
-def one_gaussian(output, target, i, j):
-    # we calculate the positions of the max value in output and target
-    correct = 0
-
-    if output[i, j].max() == 0:
-        max_out = np.array([[-10, -10]])
-    else:
-        max_out = np.array(np.where(output[i, j] == output[i, j].max()))
-        max_out = np.squeeze(np.split(max_out, max_out[0].size, 1))
-        if max_out.size <= 2:
-            max_out = [max_out]
-
-    if target[i, j].max() == 0:
-        max_target = np.array([[-10, -10]])
-    else:
-        max_target = np.array(np.where(target[i, j] == target[i, j].max()))
-        max_target = np.squeeze(np.split(max_target, max_target[0].size, 1))
-        if max_target.size <= 2:
-            max_target = [max_target]
-
-    # we check if the maximum values are in the same position (+-3 pixels)
-    for (a, b) in max_target:
-        try:
-            for (c, d) in max_out:
-                l = np.absolute((a - c, b - d))
-                if l[0] <= 3 and l[1] <= 3:
-                    correct += 1
-                    break
-        except TypeError:
-            print(max_out)
-
-    return correct, max_target, max_out
 
 
 def multiple_gaussians(output, target):
