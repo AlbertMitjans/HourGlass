@@ -1,17 +1,12 @@
 from __future__ import print_function, division
 
 import time
-import torch.utils.data
-import matplotlib.pyplot as plt
 from PIL import Image
 from torchvision.transforms import transforms
-from my_classes import pad_to_square
+from transforms.pad_to_square import pad_to_square
 import numpy as np
-import skimage.draw as draw
-from skimage.feature import peak_local_max
-from scipy.ndimage.measurements import center_of_mass, label
 
-from my_classes import AverageMeter, accuracy
+from utils.utils import AverageMeter, accuracy
 from utils.img_utils import compute_gradient, save_img, plot_gradient
 
 

@@ -119,3 +119,11 @@ def plot_gradient(gradient, output, name):
                                                                                                    color=max_colors[
                                                                                                        idx]))
         plt.close('all')
+
+
+def show_corners(image, corners):
+    """Show image with landmarks"""
+    plt.imshow(image, cmap='gray')
+    plt.scatter(corners[:, 1], corners[:, 0], s=10, marker='.', c='r')
+    plt.pause(0.005)  # pause a bit so that plots are updated
+

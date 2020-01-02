@@ -1,29 +1,26 @@
 import torch
 import torch.utils.data
-from my_classes import init_model_and_dataset
+from utils.utils import init_model_and_dataset
 
 from train import train
 from validation import validate
 
-from scipy import ndimage
-
 
 def main(train_flag, evaluate_val, save_imgs):
-    normalize_data = True
     depth = True
-    ckpt = None#'checkpoint/hg_ckpt_81.pth'
+    ckpt = None# 'checkpoint/hg_ckpt_82.pth'
     end_epoch = 200
 
     if train_flag:
         freeze = False
-        train(ckpt, freeze, depth, normalize_data, end_epoch)
+        train(ckpt, freeze, depth, end_epoch)
 
     if not train_flag:
         batch_size = 1
         num_workers = 0
         directory = '/home/amitjans/Desktop/Hourglass/data/'
 
-        model, train_dataset, val_dataset, _, _ = init_model_and_dataset(depth, directory, normalize_data)
+        model, train_dataset, val_dataset, _, _ = init_model_and_dataset(depth, directory)
 
         train_dataset.evaluate()
         val_dataset.evaluate()
@@ -49,6 +46,6 @@ if __name__ == "__main__":
     train_flag = True
     evaluate_val = True
     save_imgs = True
-    plt_gradient = False
+    plt_gradient = True
 
     main(train_flag, evaluate_val, save_imgs)

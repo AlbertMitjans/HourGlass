@@ -2,19 +2,18 @@ from __future__ import print_function, division
 
 import torch.nn.parallel
 import torch.optim
-from torch import nn
 import time
 import numpy as np
 
 from validation import validate
-from my_classes import init_model_and_dataset, adjust_learning_rate, AverageMeter, accuracy
-from utils.logger import Logger
+from utils.utils import init_model_and_dataset, adjust_learning_rate, AverageMeter, accuracy
+from utils.tb_visualizer import Logger
 
 
-def train(ckpt, freeze, depth, normalize_data, end_epoch):
+def train(ckpt, freeze, depth, end_epoch):
     batch_size = 1
     num_workers = 0
-    lr = 5e-4
+    lr = 1e-4
     momentum = 0
     weight_decay = 0
 
@@ -28,8 +27,7 @@ def train(ckpt, freeze, depth, normalize_data, end_epoch):
 
     logger = Logger('./logs')
 
-    model, train_dataset, val_dataset, criterion_grid, optimizer = init_model_and_dataset(depth, directory,
-                                                                                          normalize_data, lr,
+    model, train_dataset, val_dataset, criterion_grid, optimizer = init_model_and_dataset(depth, directory, lr,
                                                                                           weight_decay, momentum)
     val_dataset.evaluate()
 
