@@ -5,6 +5,7 @@ from my_classes import gaussian
 from PIL import Image
 import torch
 
+
 def see(images, corners):
     path = "/home/amitjans/Desktop/Hourglass/data/depth/"
     for i, corner in enumerate(corners):
