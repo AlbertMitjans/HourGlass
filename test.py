@@ -10,7 +10,7 @@ from utils.utils import AverageMeter, accuracy
 from utils.img_utils import compute_gradient, save_img, plot_gradient
 
 
-def test(val_loader, model, end_epoch, epoch=0, save_imgs=False, plt_gradient=False):
+def test(val_loader, model, save_imgs=False, plt_gradient=False):
     batch_time = AverageMeter()
     eval_recall = AverageMeter()
     eval_precision = np.array([AverageMeter(), AverageMeter(), AverageMeter(), AverageMeter()])
@@ -29,7 +29,8 @@ def test(val_loader, model, end_epoch, epoch=0, save_imgs=False, plt_gradient=Fa
         output = model(input).split(input.shape[0], dim=0)
 
         # measure accuracy
-        accuracy(corners, output[-1].data, target, input, end_epoch, epoch, eval_recall, eval_precision)
+        accuracy(corners=corners, output=output[-1].data, target=target, global_recall=eval_recall,
+                 global_precision=eval_precision)
 
         if save_imgs:
             # rgb image

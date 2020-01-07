@@ -37,7 +37,7 @@ class AverageMeter(object):
 
 def adjust_learning_rate(optimizer, epoch, lr):
     """Sets the learning rate to the initial LR decayed by 10 every 30 epochs"""
-    lr = lr * (0.1 ** (epoch // 50))
+    lr = lr * (0.1 ** (epoch // 30))
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
 
@@ -76,7 +76,7 @@ def init_model_and_dataset(depth, directory, lr=5e-6, weight_decay=0, momentum=0
     return model, train_dataset, val_dataset, criterion, optimizer
 
 
-def accuracy(corners, output, target, input, end_epoch, epoch, global_recall, global_precision, depth=True):
+def accuracy(corners, output, target, global_recall, global_precision):
     """Computes the precision@k for the specified values of k"""
     batch_size = target.size(0)
 
@@ -91,10 +91,6 @@ def accuracy(corners, output, target, input, end_epoch, epoch, global_recall, gl
         for i, (a, b) in enumerate(sorted(corners[batch_unit], key=lambda x: x[0], reverse=True)):
             if a != 0 and b != 0:
                 global_precision[i].update(precision[i])
-
-        # we check the result
-        if epoch >= end_epoch:
-            show_output(batch_unit, input, output, target, depth)
 
     return max_out
 
@@ -147,19 +143,3 @@ def multiple_gaussians(output, target):
         precision[np.isnan(precision)] = 0
 
     return recall, precision, max_out
-
-
-def show_output(i, input, output, target, depth=True):
-    img = input.cpu().detach().numpy()
-
-    f, axarray = plt.subplots(1, 2)
-    axarray[0].imshow(target[i, 0], cmap='gray')
-    axarray[1].imshow(output[i, 0], cmap='gray')
-    plt.figure()
-    if depth:
-        plt.imshow(img[i][0] - img[i][0].min(), cmap='gray', vmin=0, vmax=img[i].max())
-    if not depth:
-        plt.imshow(np.moveaxis(img[i] - img[i].min(), 0, -1), vmax=img[i].max())
-    plt.show()
-    plt.waitforbuttonpress()
-    plt.close('all')

@@ -78,16 +78,15 @@ class CornersDataset(Dataset):
 
         sample = {'image': image, 'grid': grid, 'img_name': img_number, 'corners': corners}
 
-        if not self.validation:
-            if self.transform:
-                sample = self.transform(sample)
-
         if self.depth:
+            if not self.validation:
+                if self.transform:
+                    sample = self.transform(sample)
             im = transforms.ToPILImage()(sample['image'])
             edges = transforms.ToTensor()(im.convert('L').filter(ImageFilter.FIND_EDGES))
             contours = transforms.ToTensor()(im.convert('L').filter(ImageFilter.CONTOUR))
             depth = transforms.ToTensor()(im)
-            image = torch.stack((depth[0], edges[0], contours[0]))
+            image = torch.stack((depth[0], depth[0], depth[0]))
             sample['image'] = image
 
         sample['image'] = pad_to_square(sample['image'])

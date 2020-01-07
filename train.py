@@ -10,8 +10,8 @@ from utils.utils import init_model_and_dataset, adjust_learning_rate, AverageMet
 from utils.tb_visualizer import Logger
 
 
-def train(ckpt, freeze, depth, end_epoch):
-    batch_size = 1
+def train(ckpt, depth, num_epochs, batch_size):
+    start = time.time()
     num_workers = 0
     lr = 5e-4
     momentum = 0
@@ -20,7 +20,6 @@ def train(ckpt, freeze, depth, end_epoch):
     directory = '/home/amitjans/Desktop/Hourglass/data/'
     start_epoch = 0
     start_loss = 0
-    num_epochs = 200
     print_freq = 100
     checkpoint_interval = 1
     evaluation_interval = 1
@@ -39,13 +38,6 @@ def train(ckpt, freeze, depth, end_epoch):
         optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
         start_epoch = checkpoint['epoch']
         start_loss = checkpoint['loss']
-
-    # we freeze some of the parameters
-    if freeze:
-        for param in model.parameters():
-            a = np.random.randint(0, 1)
-            if a > 0.5:
-                param.requires_grad = False
 
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True,
                                                num_workers=num_workers, pin_memory=True)
@@ -82,7 +74,8 @@ def train(ckpt, freeze, depth, end_epoch):
             loss = sum(i*criterion_grid(o, grid) for i, o in enumerate(output))
 
             # measure accuracy and record loss
-            accuracy(corners, output[-1].data, grid, input, end_epoch, epoch, train_recall, train_precision, depth=depth)
+            accuracy(corners=corners, output=output[-1].data, target=grid, global_recall=train_recall,
+                     global_precision=train_precision)
             train_loss.update(loss.item())
 
             # compute gradient and do SGD step
@@ -107,9 +100,9 @@ def train(ckpt, freeze, depth, end_epoch):
             # evaluate on validation set
             print('Train set:  ')
 
-            t_recall, t_precision = test(train_loader, model, end_epoch, epoch)
+            t_recall, t_precision = test(train_loader, model)
             print('Validation set:  ')
-            e_recall, e_precision = test(val_loader, model, end_epoch, epoch)
+            e_recall, e_precision = test(val_loader, model)
 
             # 1. Log scalar values (scalar summary)
             info = {'Train Loss': train_loss.avg, 'Train Recall': t_recall, 'Train Precision 1': t_precision[0],

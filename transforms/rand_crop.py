@@ -23,12 +23,4 @@ class RandomCrop(object):
             sample['image'] = res_image
             sample['grid'] = grid
 
-        else:
-            image = sample['image']
-            edges = transforms.ToTensor()(transforms.ToPILImage()(image[0]).convert('L').filter(ImageFilter.FIND_EDGES))
-            contours = transforms.ToTensor()(transforms.ToPILImage()(image[0]).convert('L').filter(ImageFilter.CONTOUR))
-            image = torch.stack((image[0], edges[0], contours[0]))
-
-            sample['image'] = image
-
         return sample

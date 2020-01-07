@@ -1,22 +1,19 @@
 import torch
 import torch.utils.data
 from utils.utils import init_model_and_dataset
+import argparse
 
 from train import train
 from test import test
+from realtime_display.realtime_display import realtime_display
 
 
-def main(train_flag, evaluate_val, save_imgs):
-    depth = True
-    ckpt = None #'checkpoint/hg_ckpt_82.pth'
-    end_epoch = 200
+def main(train_flag, evaluate_val, save_imgs, depth, ckpt, num_epochs, batch_size, plot_gradient, display):
 
-    if train_flag:
-        freeze = False
-        train(ckpt, freeze, depth, end_epoch)
+    if train_flag and not display:
+        train(ckpt, depth, num_epochs, batch_size)
 
-    if not train_flag:
-        batch_size = 1
+    elif not train_flag and not display:
         num_workers = 0
         directory = '/home/amitjans/Desktop/Hourglass/data/'
 
@@ -39,13 +36,39 @@ def main(train_flag, evaluate_val, save_imgs):
         val_loader = torch.utils.data.DataLoader(transformed_dataset, batch_size=batch_size, shuffle=False,
                                                  num_workers=num_workers, pin_memory=True)
 
-        test(val_loader, model, end_epoch, save_imgs=save_imgs, plt_gradient=plt_gradient)
+        test(val_loader, model, save_imgs=save_imgs, plt_gradient=plot_gradient)
+
+    elif display:
+        realtime_display(ckpt)
 
 
 if __name__ == "__main__":
-    train_flag = True
-    evaluate_val = True
-    save_imgs = True
-    plt_gradient = True
 
-    main(train_flag, evaluate_val, save_imgs)
+    def str2bool(v):
+        if isinstance(v, bool):
+            return v
+        if v.lower() in ('yes', 'true', 't', 'y', '1'):
+            return True
+        elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+            return False
+        else:
+            raise argparse.ArgumentTypeError('Boolean value expected.')
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--train", type=str2bool, default=True, help="if True/False, training/testing will be implemented")
+    parser.add_argument("--val_data", type=str2bool, default=True, help="if True/False, all/validation data will be used "
+                                                                    "for testing")
+    parser.add_argument("--save_imgs", type=str2bool, default=True, help="if True, output imgs will be saved")
+    parser.add_argument("--plot_gradient", type=str2bool, default=False, help="if True, gradient plots will be saved")
+    parser.add_argument("--batch_size", type=int, default=1, help="size of each image batch")
+    parser.add_argument("--depth", type=str2bool, default=True, help="if True/False, depth/RGB images will be used")
+    parser.add_argument("--ckpt", type=str, default=None, help="path to ckpt file")
+    parser.add_argument("--num_epochs", type=int, default=200, help="number of epochs")
+    parser.add_argument("--display", type=str2bool, default=False, help="activate realtime display of the "
+                                                                             "network's output")
+    opt = parser.parse_args()
+    print(opt)
+
+    main(train_flag=opt.train, evaluate_val=opt.val_data, save_imgs=opt.save_imgs, depth=opt.depth, ckpt=opt.ckpt,
+         num_epochs=opt.num_epochs, batch_size=opt.batch_size, plot_gradient=opt.plot_gradient,
+         display=opt.display)

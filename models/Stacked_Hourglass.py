@@ -13,6 +13,7 @@ import torchvision.transforms.functional as func
 
 __all__ = ['HourglassNet', 'hg']
 
+
 class Bottleneck(nn.Module):
     expansion = 2
 
