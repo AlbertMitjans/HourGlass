@@ -3,12 +3,12 @@ import torch.utils.data
 from utils.utils import init_model_and_dataset
 
 from train import train
-from validation import validate
+from test import test
 
 
 def main(train_flag, evaluate_val, save_imgs):
     depth = True
-    ckpt = None# 'checkpoint/hg_ckpt_82.pth'
+    ckpt = None #'checkpoint/hg_ckpt_82.pth'
     end_epoch = 200
 
     if train_flag:
@@ -39,7 +39,7 @@ def main(train_flag, evaluate_val, save_imgs):
         val_loader = torch.utils.data.DataLoader(transformed_dataset, batch_size=batch_size, shuffle=False,
                                                  num_workers=num_workers, pin_memory=True)
 
-        validate(val_loader, model, end_epoch, save_imgs=save_imgs, plt_gradient=plt_gradient)
+        test(val_loader, model, end_epoch, save_imgs=save_imgs, plt_gradient=plt_gradient)
 
 
 if __name__ == "__main__":

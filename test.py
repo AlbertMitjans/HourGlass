@@ -10,7 +10,7 @@ from utils.utils import AverageMeter, accuracy
 from utils.img_utils import compute_gradient, save_img, plot_gradient
 
 
-def validate(val_loader, model, end_epoch, epoch=0, save_imgs=False, plt_gradient=False):
+def test(val_loader, model, end_epoch, epoch=0, save_imgs=False, plt_gradient=False):
     batch_time = AverageMeter()
     eval_recall = AverageMeter()
     eval_precision = np.array([AverageMeter(), AverageMeter(), AverageMeter(), AverageMeter()])

@@ -5,7 +5,7 @@ import torch.optim
 import time
 import numpy as np
 
-from validation import validate
+from test import test
 from utils.utils import init_model_and_dataset, adjust_learning_rate, AverageMeter, accuracy
 from utils.tb_visualizer import Logger
 
@@ -13,14 +13,14 @@ from utils.tb_visualizer import Logger
 def train(ckpt, freeze, depth, end_epoch):
     batch_size = 1
     num_workers = 0
-    lr = 1e-4
+    lr = 5e-4
     momentum = 0
     weight_decay = 0
 
     directory = '/home/amitjans/Desktop/Hourglass/data/'
     start_epoch = 0
     start_loss = 0
-    num_epochs = 100
+    num_epochs = 200
     print_freq = 100
     checkpoint_interval = 1
     evaluation_interval = 1
@@ -107,9 +107,9 @@ def train(ckpt, freeze, depth, end_epoch):
             # evaluate on validation set
             print('Train set:  ')
 
-            t_recall, t_precision = validate(train_loader, model, end_epoch, epoch)
+            t_recall, t_precision = test(train_loader, model, end_epoch, epoch)
             print('Validation set:  ')
-            e_recall, e_precision = validate(val_loader, model, end_epoch, epoch)
+            e_recall, e_precision = test(val_loader, model, end_epoch, epoch)
 
             # 1. Log scalar values (scalar summary)
             info = {'Train Loss': train_loss.avg, 'Train Recall': t_recall, 'Train Precision 1': t_precision[0],
