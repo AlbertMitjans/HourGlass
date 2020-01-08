@@ -44,15 +44,15 @@ $ python3 main.py --display True
 
 
 ## Additional arguments
---train (default:True) : if True/False, training/testing is implemented.
---val_data (default:True) : if True/False, all/validation data will be evaluated.
---save_imgs (default:True) : if True output images will be saved in the \Output folder.
---plot_gradient (default:False) : if True the gradient plots will be saved in the \Output folder.
---batch_size (default:1)
---depth (default:True) : if True/False, depth/RGB images will be used.
---ckpt(default:None)
---num_epochs (default:200)
---display (default:False) : activate realtime display of network's output
+--train (default:True) : if True/False, training/testing is implemented.  
+--val_data (default:True) : if True/False, all/validation data will be evaluated.  
+--save_imgs (default:True) : if True output images will be saved in the \Output folder.  
+--plot_gradient (default:False) : if True the gradient plots will be saved in the \Output folder.  
+--batch_size (default:1)  
+--depth (default:True) : if True/False, depth/RGB images will be used.  
+--ckpt(default:None)  
+--num_epochs (default:200)  
+--display (default:False) : activate realtime display of network's output  
 
 
 
