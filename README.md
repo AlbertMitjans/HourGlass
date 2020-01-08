@@ -33,6 +33,17 @@ Trains the network from scratch or from a given ckpt.
 $ python3 main.py
 ```
 
+**Tensorboard**
+
+Track training progress in Tensorboard:
++ Initialize training
++ Run the command below
++ Go to [http://localhost:6006/](http://localhost:6006/)
+
+```
+$ tensorboard --logdir='logs' --port=6006
+```
+
 
 ## Realtime test
 
