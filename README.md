@@ -33,6 +33,9 @@ Trains the network from scratch or from a given ckpt.
 $ python3 main.py
 ```
 
+**Training log**
+
+
 **Tensorboard**
 
 Track training progress in Tensorboard:
