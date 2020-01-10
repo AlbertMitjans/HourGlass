@@ -25,6 +25,13 @@ Evaluates the model on the dataset.
 $ python3 main.py --train False
 ```
 
+**Testing log**
+```
+ * Recall(%): 6.250	 * Precision(%):  (6.818, 6.078, 5.191, 7.037)
+```
+
+The precision is computed for the (1, 2, 3, 4) gaussians with the max value in its center.
+
 ## Run train
 
 Trains the network from scratch or from a given ckpt.
@@ -34,7 +41,9 @@ $ python3 main.py
 ```
 
 **Training log**
-
+```
+Epoch: [5][300/312]	Loss.avg: 0.3615	Recall(%): 21.622	Precision num. corners (%): (22.591, 18.563, 15.833, 16.809)
+```
 
 **Tensorboard**
 
