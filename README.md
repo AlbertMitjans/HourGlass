@@ -58,7 +58,7 @@ $ tensorboard --logdir='logs' --port=6006
 
 
 ## Realtime test
-Go to [this repository](https://github.com/AlbertMitjans/Xtion)
+Go to [this repository](https://github.com/AlbertMitjans/Xtion).
 
 ## Additional arguments
 --train (default:True) : if True/False, training/testing is implemented.  
