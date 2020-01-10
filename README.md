@@ -30,7 +30,7 @@ $ python3 main.py --train False
  * Recall(%): 6.250	 * Precision(%):  (6.818, 6.078, 5.191, 7.037)
 ```
 
-The precision is computed for the (1, 2, 3, 4) gaussians with the max value in its center.
+The precision is computed for the (1, 2, 3, 4) corners detected with highest confidence (the gaussians with a highest value on its center).
 
 ## Run train
 
