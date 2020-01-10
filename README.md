@@ -62,7 +62,7 @@ Watch the output of the network in realtime by connecting a depth camera.
 
 Go to [this repository](https://github.com/AlbertMitjans/Xtion).
 
-## Additional arguments
+## Arguments
 --train (default:True) : if True/False, training/testing is implemented.  
 --val_data (default:True) : if True/False, all/validation data will be evaluated.  
 --save_imgs (default:True) : if True output images will be saved in the \Output folder.  
