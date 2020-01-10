@@ -58,6 +58,8 @@ $ tensorboard --logdir='logs' --port=6006
 
 
 ## Realtime test
+Watch the output of the network in realtime by connecting a depth camera.
+
 Go to [this repository](https://github.com/AlbertMitjans/Xtion).
 
 ## Additional arguments
