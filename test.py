@@ -7,10 +7,10 @@ from transforms.pad_to_square import pad_to_square
 import numpy as np
 
 from utils.utils import AverageMeter, accuracy
-from utils.img_utils import compute_gradient, save_img, plot_gradient
+from utils.img_utils import compute_gradient, save_img
 
 
-def test(val_loader, model, save_imgs=False, plt_gradient=False):
+def test(val_loader, model, save_imgs=False):
     batch_time = AverageMeter()
     eval_recall = AverageMeter()
     eval_precision = np.array([AverageMeter(), AverageMeter(), AverageMeter(), AverageMeter()])
@@ -42,8 +42,6 @@ def test(val_loader, model, save_imgs=False, plt_gradient=False):
             # gradient plot
             gradient = compute_gradient(depth.cpu().detach().numpy())
             gradient = pad_to_square(gradient.expand(3, -1, -1))[0]
-            if plt_gradient:
-                plot_gradient(gradient, output[-1].cpu().detach().numpy()[0][0], data['img_name'][0])
             save_img(rgb, output[-1].cpu().detach().numpy()[0][0], gradient, data['img_name'][0])
 
         # measure elapsed time

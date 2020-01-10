@@ -1,19 +1,18 @@
 from __future__ import print_function, division
-import torch
+
 import numpy as np
-import matplotlib.pyplot as plt
+import torch
 import torch.backends.cudnn as cudnn
 import torch.nn as nn
 import torchvision.transforms as transforms
-from skimage.feature import peak_local_max
 from scipy.ndimage.measurements import center_of_mass, label
+from skimage.feature import peak_local_max
 
-
-from models.Stacked_Hourglass import HourglassNet, Bottleneck
+from data.dataset import CornersDataset
 from loss.loss import JointsMSELoss
+from models.Stacked_Hourglass import HourglassNet, Bottleneck
 from transforms.rand_crop import RandomCrop
 from transforms.rand_horz_flip import HorizontalFlip
-from data.dataset import CornersDataset
 
 
 class AverageMeter(object):
@@ -51,7 +50,7 @@ def init_model_and_dataset(depth, directory, lr=5e-6, weight_decay=0, momentum=0
     criterion = JointsMSELoss().cuda()
     optimizer = torch.optim.RMSprop(model.parameters(), lr, weight_decay=weight_decay)
 
-    checkpoint = torch.load("checkpoint/hg_s2_b1/model_best.pth.tar")
+    checkpoint = torch.load("checkpoints/hg_s2_b1/model_best.pth.tar")
 
     model.load_state_dict(checkpoint['state_dict'])
     optimizer.load_state_dict(checkpoint['optimizer'])
@@ -97,7 +96,8 @@ def accuracy(corners, output, target, global_recall, global_precision):
 
 def multiple_gaussians(output, target):
     # we calculate the positions of the max value in output and target
-    max_target = peak_local_max(target[0].clip(0.99), min_distance=19, exclude_border=False, indices=False) #num_peaks=4)
+    max_target = peak_local_max(target[0].clip(0.99), min_distance=19, exclude_border=False,
+                                indices=False)  # num_peaks=4)
     labels_target = label(max_target)[0]
     max_target = np.array(center_of_mass(max_target, labels_target, range(1, np.max(labels_target) + 1))).astype(np.int)
 
@@ -113,13 +113,13 @@ def multiple_gaussians(output, target):
     for index in max_out:
         max_values.append(output[0][index[0]][index[1]])
 
-    max_out = np.array([x for _,x in sorted(zip(max_values, max_out), reverse=True, key=lambda x: x[0])])
+    max_out = np.array([x for _, x in sorted(zip(max_values, max_out), reverse=True, key=lambda x: x[0])])
 
     for n in range(min(4, max_out.shape[0])):
-        max_out2 = max_out[:n+1]
+        max_out2 = max_out[:n + 1]
         for i, (c, d) in enumerate(max_out2):
             if i < max_out2.shape[0] - 1:
-                dist = np.absolute((max_out2[i+1][0] - c, max_out2[i+1][1] - d))
+                dist = np.absolute((max_out2[i + 1][0] - c, max_out2[i + 1][1] - d))
                 if dist[0] <= 8 and dist[1] <= 8:
                     continue
             all_p[n] += 1
@@ -138,8 +138,8 @@ def multiple_gaussians(output, target):
         recall = 0
         precision = np.array([0, 0, 0, 0]).astype(np.float)
     else:
-        recall = true_p[min(4, max_out.shape[0]) - 1]/num_targets
-        precision = true_p/all_p
+        recall = true_p[min(4, max_out.shape[0]) - 1] / num_targets
+        precision = true_p / all_p
         precision[np.isnan(precision)] = 0
 
     return recall, precision, max_out

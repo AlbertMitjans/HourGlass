@@ -11,7 +11,6 @@ from utils.tb_visualizer import Logger
 
 
 def train(ckpt, depth, num_epochs, batch_size):
-    start = time.time()
     num_workers = 0
     lr = 5e-4
     momentum = 0
@@ -133,4 +132,4 @@ def train(ckpt, depth, num_epochs, batch_size):
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
                 'loss': train_loss.avg
-            }, "checkpoint/hg_ckpt_{0}.pth".format(epoch))
+            }, "checkpoints/hg_ckpt_{0}.pth".format(epoch))

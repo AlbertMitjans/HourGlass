@@ -1,14 +1,12 @@
-from scipy import ndimage
-import torchvision.transforms as transforms
-import numpy as np
 import matplotlib.pyplot as plt
-from skimage.feature import peak_local_max
-from scipy.ndimage.measurements import center_of_mass, label
-import torch
+import numpy as np
 import skimage.draw as draw
+import torch
+import torchvision.transforms as transforms
 from PIL import Image
-from scipy.signal import lfilter
-import os
+from scipy import ndimage
+from scipy.ndimage.measurements import center_of_mass, label
+from skimage.feature import peak_local_max
 
 
 def compute_gradient(image):
@@ -83,47 +81,8 @@ def save_img(rgb, output, gradient, name):
     plt.close('all')
 
 
-def plot_gradient(gradient, output, name):
-    max_coord = local_max(output)
-    max_colors = ['Red', 'Green', 'Blue', 'Yellow']
-    prange = [100, 100]
-    # noise filter
-    n = 1
-    b = [1.0 / n] * n
-    a = 1
-    gradient = lfilter(b, a, gradient)
-    for idx, (i, j) in enumerate(max_coord):
-        if i < prange[0] or i > gradient.shape[0] - prange[0]:
-            prange[0] = min(i, gradient.shape[0] - i)
-        if j < prange[1] or j > gradient.shape[1] - prange[1]:
-            prange[1] = min(j, gradient.shape[1] - j)
-        plt.ioff()
-        fig, ax = plt.subplots(1, 2)
-        fig.set_size_inches((20, 10))
-        ax[0].plot(np.arange(j - prange[1], j + prange[1]), gradient[i][j - prange[1]:j + prange[1]], color='b',
-                   label='Row number {top1}'.format(top1=i))
-        ax[1].plot(np.arange(i - prange[0], i + prange[0]), gradient[:][j][i - prange[0]:i + prange[0]], color='r',
-                   label='Column number {top1}'.format(top1=j))
-        ax[0].axvline(j, label='Output value', color='b', linestyle='--')
-        ax[1].axvline(i, label='Output value', color='r', linestyle='--')
-        ax[0].set_xlabel('Column number')
-        ax[0].set_ylabel('Gradient value')
-        ax[0].set_title('Gradient along the x axis')
-        ax[0].legend()
-        ax[1].set_xlabel('Row number')
-        ax[1].set_ylabel('Gradient value')
-        ax[1].set_title('Gradient along the y axis')
-        ax[1].legend()
-        if idx < 4:
-            plt.savefig('/home/amitjans/Desktop/Hourglass/output/plots/{image}_{color}.png'.format(image=name,
-                                                                                                   color=max_colors[
-                                                                                                       idx]))
-        plt.close('all')
-
-
 def show_corners(image, corners):
     """Show image with landmarks"""
     plt.imshow(image, cmap='gray')
     plt.scatter(corners[:, 1], corners[:, 0], s=10, marker='.', c='r')
     plt.pause(0.005)  # pause a bit so that plots are updated
-
