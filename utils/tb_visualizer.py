@@ -1,6 +1,5 @@
-import tensorflow as tf
 import numpy as np
-import scipy.misc
+import tensorflow as tf
 from PIL import Image
 
 try:
@@ -30,7 +29,7 @@ class Logger(object):
                 s = StringIO()
             except:
                 s = BytesIO()
-            img = (img/img.max() * 255).astype(np.uint8)
+            img = (img / img.max() * 255).astype(np.uint8)
             img = np.resize(img, (img.shape[0], img.shape[1], 3))
             Image.fromarray(img).save(s, format="png")
 
