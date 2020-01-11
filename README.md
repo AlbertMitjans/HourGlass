@@ -14,7 +14,6 @@ $ git clone https://github.com/AlbertMitjans/Hourglass.git
 ```
 **Download dataset**
 ```
-$ cd data
 $ bash get_dataset.sh
 ```
 
