@@ -10,10 +10,12 @@ $ git clone https://github.com/AlbertMitjans/Hourglass.git
 ```
 **Download pretrained weights**
 ```
-???
+$ cd checkpoints/
+$ bash get_weights.sh
 ```
 **Download dataset**
 ```
+$ cd data/
 $ bash get_dataset.sh
 ```
 
