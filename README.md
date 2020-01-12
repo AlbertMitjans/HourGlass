@@ -6,7 +6,7 @@ This repo contains the code structure used for the detection of the corners of a
 
 **Clone**
 ```
-$ git clone https://github.com/AlbertMitjans/Hourglass.git
+$ git clone https://github.com/AlbertMitjans/pytorch-corner-detection.git
 ```
 **Download pretrained weights**
 ```
