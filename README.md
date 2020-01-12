@@ -62,7 +62,7 @@ $ tensorboard --logdir='logs' --port=6006
 ## Real-time test
 Watch the output of the network in real-time by connecting a depth camera.
 
-Go to [this repository](https://github.com/AlbertMitjans/Xtion).
+Go to [this repository](https://github.com/AlbertMitjans/real-time).
 
 ## Arguments
 --train (default:True) : if True/False, training/testing is implemented.  
