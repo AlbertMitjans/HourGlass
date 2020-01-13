@@ -70,7 +70,7 @@ Go to [this repository](https://github.com/AlbertMitjans/real-time).
 --save_imgs (default:True) : if True output images will be saved in the \Output folder.  
 --batch_size (default:1)  
 --depth (default:True) : if True/False, depth/RGB images will be used.  
---ckpt(default:None)  
+--ckpt(default:"checkpoints/best_ckpt/model.pth")  
 --num_epochs (default:200)  
 
 
