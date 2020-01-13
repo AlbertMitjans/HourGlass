@@ -24,7 +24,7 @@ $ bash get_dataset.sh
 Evaluates the model on the dataset and saves the resulting images in output/.
 
 ```
-$ python3 main.py --train False
+$ python3 main.py --train False --ckpt checkpoints/best_ckpts/model.pth
 ```
 
 **Testing log**
@@ -39,7 +39,7 @@ The precision is computed for the (1, 2, 3, 4) corners detected with highest con
 Trains the network from scratch or from a given ckpt.
 
 ```
-$ python3 main.py --ckpt None
+$ python3 main.py
 ```
 
 **Training log**
@@ -70,7 +70,7 @@ Go to [this repository](https://github.com/AlbertMitjans/real-time).
 --save_imgs (default:True) : if True output images will be saved in the \Output folder.  
 --batch_size (default:1)  
 --depth (default:True) : if True/False, depth/RGB images will be used.  
---ckpt(default:"checkpoints/best_ckpt/model.pth")  
+--ckpt(default:None)  
 --num_epochs (default:200)  
 
 
