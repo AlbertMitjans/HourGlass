@@ -39,7 +39,7 @@ The precision is computed for the (1, 2, 3, 4) corners detected with highest con
 Trains the network from scratch or from a given ckpt.
 
 ```
-$ python3 main.py
+$ python3 main.py --ckpt None
 ```
 
 **Training log**
