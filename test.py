@@ -34,15 +34,15 @@ def test(val_loader, model, save_imgs=False):
 
         if save_imgs:
             # rgb image
-            rgb = Image.open('data/rgb/' + data['img_name'][0] + '.png')
-            rgb = transforms.ToTensor()(rgb)[:, :-1, :-1]
-            depth = input[0][0][int((input.shape[2] - rgb.shape[1]) / 2): int((input.shape[2] + rgb.shape[1]) / 2)][
-                    int((input.shape[3] - rgb.shape[2]) / 2): int((input.shape[3] + rgb.shape[2]) / 2)]
-            rgb = pad_to_square(rgb)
+            try:
+                rgb = Image.open('data/train_dataset/' + data['img_name'][0] + '.png')
+            except FileNotFoundError:
+                rgb = Image.open('data/val_dataset/' + data['img_name'][0] + '.png')
+            rgb = transforms.ToTensor()(rgb)
+            rgb = transforms.ToPILImage()(pad_to_square(rgb)).resize(input.shape[2:])
+            rgb = transforms.ToTensor()(rgb)
             # gradient plot
-            gradient = compute_gradient(depth.cpu().detach().numpy())
-            gradient = pad_to_square(gradient.expand(3, -1, -1))[0]
-            save_img(rgb, output[-1].cpu().detach().numpy()[0][0], gradient, data['img_name'][0])
+            save_img(rgb, output[-1].cpu().detach().numpy()[0][0], data['img_name'][0])
 
         # measure elapsed time
         batch_time.update(time.time() - end)

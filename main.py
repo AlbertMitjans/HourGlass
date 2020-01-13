@@ -51,7 +51,7 @@ if __name__ == "__main__":
             raise argparse.ArgumentTypeError('Boolean value expected.')
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--train", type=str2bool, default=True, help="if True/False, training/testing will be implemented")
+    parser.add_argument("--train", type=str2bool, default=False, help="if True/False, training/testing will be implemented")
     parser.add_argument("--val_data", type=str2bool, default=True, help="if True/False, all/validation data will be used "
                                                                     "for testing")
     parser.add_argument("--save_imgs", type=str2bool, default=True, help="if True, output imgs will be saved")

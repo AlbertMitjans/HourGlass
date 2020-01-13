@@ -37,47 +37,30 @@ def local_max(image):
     return max_out
 
 
-def corner_mask(output, gradient):
+def corner_mask(output):
     max_coord = local_max(output)
     corners = torch.zeros(3, output.shape[0], output.shape[1])
-    grad_values = []
     for idx, (i, j) in enumerate(max_coord):
         cx, cy = draw.circle_perimeter(i, j, 9, shape=output.shape)
         if idx < 4:
-            grad_values.append(gradient[cx.min():cx.max(), cy.min():cy.max()].sum())
-            if idx == 3:
-                corners[0, cx, cy] = 1.
-                corners[1, cx, cy] = 1.
-            else:
-                corners[idx, cx, cy] = 1.
-        else:
-            corners[:, cx, cy] = 1.
+            corners[0, cx, cy] = 1.
 
-    return corners, grad_values, max_coord
+    return corners, max_coord
 
 
-def save_img(rgb, output, gradient, name):
-    corners, grad_values, max_coord = corner_mask(output, gradient)
+def save_img(rgb, output, name):
+    corners, max_coord = corner_mask(output)
     rgb, corners = transforms.ToPILImage()(rgb), transforms.ToPILImage()(corners)
-    image = Image.blend(rgb, corners, 0.5)
+    image = Image.blend(rgb, corners, 0.3)
     plt.ioff()
-    fig, ax = plt.subplots(1, 3)
+    fig, ax = plt.subplots(1, 2)
     fig.set_size_inches((15, 6))
-    ax[2].axis('on')
-    ax[2].set_title('RGB image')
+    ax[1].axis('on')
+    ax[1].set_title('RGB image')
     ax[0].axis('off')
     ax[0].set_title('Network\'s output')
-    ax[1].axis('off')
-    ax[1].set_title('Gradient')
-    ax[1].scatter(max_coord[:, 1], max_coord[:, 0], marker='o', c='r', s=0.1)
     ax[0].imshow(output, cmap='afmhot', vmin=0, vmax=1)
-    ax[1].imshow(gradient, cmap='gray')
-    ax[2].imshow(image)
-    txt = ''
-    max_colors = ['Red', 'Green', 'Blue', 'Yellow']
-    for idx, val in enumerate(grad_values):
-        txt += '{color} ---> grad = {top1:.2f}\n'.format(top1=val.item(), color=max_colors[idx])
-    plt.figtext(0.46, 0.07, txt, fontsize=10)
+    ax[1].imshow(image)
     Path('output/').mkdir(parents=True, exist_ok=True)
     plt.savefig('output/{image}.png'.format(image=name))
     plt.close('all')
