@@ -57,7 +57,7 @@ if __name__ == "__main__":
     parser.add_argument("--save_imgs", type=str2bool, default=True, help="if True, output imgs will be saved")
     parser.add_argument("--batch_size", type=int, default=1, help="size of each image batch")
     parser.add_argument("--depth", type=str2bool, default=True, help="if True/False, depth/RGB images will be used")
-    parser.add_argument("--ckpt", type=str, default="checkpoints/best_ckpt/model.pth", help="path to ckpt file")
+    parser.add_argument("--ckpt", type=str, default=None, help="path to ckpt file")
     parser.add_argument("--num_epochs", type=int, default=200, help="number of epochs")
     opt = parser.parse_args()
     print(opt)
