@@ -1,4 +1,4 @@
-# Hourglass for corners detection of deformable fabric
+# Hourglass for corner detection of deformable fabric
 
 This repo contains the code structure used for the detection of the corners of a wrinkled towel. 
 
