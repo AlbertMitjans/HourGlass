@@ -16,7 +16,7 @@ def train(ckpt, depth, num_epochs, batch_size):
     momentum = 0
     weight_decay = 0
 
-    directory = '/home/amitjans/Desktop/Hourglass/data/'
+    directory = 'data/'
     start_epoch = 0
     start_loss = 0
     print_freq = 100
