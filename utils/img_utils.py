@@ -7,6 +7,7 @@ from PIL import Image
 from scipy import ndimage
 from scipy.ndimage.measurements import center_of_mass, label
 from skimage.feature import peak_local_max
+from pathlib import Path
 
 
 def compute_gradient(image):
@@ -77,7 +78,8 @@ def save_img(rgb, output, gradient, name):
     for idx, val in enumerate(grad_values):
         txt += '{color} ---> grad = {top1:.2f}\n'.format(top1=val.item(), color=max_colors[idx])
     plt.figtext(0.46, 0.07, txt, fontsize=10)
-    plt.savefig('/home/amitjans/Desktop/Hourglass/output/images/{image}.png'.format(image=name))
+    Path('output/').mkdir(parents=True, exist_ok=True)
+    plt.savefig('output/{image}.png'.format(image=name))
     plt.close('all')
 
 

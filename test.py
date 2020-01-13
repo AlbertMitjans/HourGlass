@@ -34,7 +34,7 @@ def test(val_loader, model, save_imgs=False):
 
         if save_imgs:
             # rgb image
-            rgb = Image.open('/home/amitjans/Desktop/Hourglass/data/rgb/' + data['img_name'][0] + '.png')
+            rgb = Image.open('data/rgb/' + data['img_name'][0] + '.png')
             rgb = transforms.ToTensor()(rgb)[:, :-1, :-1]
             depth = input[0][0][int((input.shape[2] - rgb.shape[1]) / 2): int((input.shape[2] + rgb.shape[1]) / 2)][
                     int((input.shape[3] - rgb.shape[2]) / 2): int((input.shape[3] + rgb.shape[2]) / 2)]
