@@ -55,7 +55,7 @@ def save_img(rgb, output, name):
     plt.ioff()
     fig, ax = plt.subplots(1, 2)
     fig.set_size_inches((15, 6))
-    ax[1].axis('on')
+    ax[1].axis('off')
     ax[1].set_title('RGB image')
     ax[0].axis('off')
     ax[0].set_title('Network\'s output')
