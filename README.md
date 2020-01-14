@@ -28,6 +28,9 @@ Evaluates the model on the dataset and saves the resulting images in *output/*.
 ```
 $ python3 main.py --train False --ckpt checkpoints/best_ckpt/model.pth
 ```
+<p align="center">
+  <img width="900" height="300" src="assets/output.png">
+</p>
 
 **Testing log**
 ```
