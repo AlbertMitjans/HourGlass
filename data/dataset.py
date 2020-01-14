@@ -102,7 +102,7 @@ class CornersDataset(Dataset):
         return sample
 
 
-def gaussian(image, corners, kernel=39, nsig=5, target_size=(304, 495)):
+def gaussian(image, corners, kernel=40, nsig=5, target_size=(304, 495)):
     target = np.zeros((4, target_size[0], target_size[1]))
     n = float(image.shape[0]) / float(target.shape[1])
     m = float(image.shape[1]) / float(target.shape[2])
@@ -110,7 +110,7 @@ def gaussian(image, corners, kernel=39, nsig=5, target_size=(304, 495)):
         if x != 0 and y != 0:
             a = int(x / n)
             b = int(y / m)
-            x = np.linspace(-nsig, nsig, kernel + 1)
+            x = np.linspace(-nsig, nsig, kernel)
             kern1d = np.diff(st.norm.cdf(x))
             kern2d = np.outer(kern1d, kern1d)
             ax = a - kern2d.shape[0] // 2
