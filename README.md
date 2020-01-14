@@ -4,11 +4,17 @@ This repo contains the code structure used for the detection of the corners of a
 
 ## Installation
 
+**Create conda environment**
+```
+$ conda create -n ENVIRONMENT_NAME python=3
+$ conda activate ENVIRONMENT_NAME
+```
+
 **Clone and install requirements**  
 ```
 $ git clone https://github.com/AlbertMitjans/pytorch-corner-detection.git
 $ cd pytorch-corner-detection
-$ ???
+$ conda install --file requirements.txt
 ```
 **Download pretrained weights**
 ```
