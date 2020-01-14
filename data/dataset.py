@@ -38,9 +38,9 @@ class CornersDataset(Dataset):
                     for color, x, y in c:
                         self.colors.append(color)
                         if x == '-' and y == '-':
-                            c[np.where(c == x)] = 0
-                            c[np.where(c == y)] = 0
-                        elif x is 0 and y is 0:
+                            c[np.where(c == x)] = -1
+                            c[np.where(c == y)] = -1
+                        elif x is -1 and y is -1:
                             continue
                         else:
                             c[np.where(c == x)] = int(x)
@@ -107,7 +107,7 @@ def gaussian(image, corners, kernel=40, nsig=5, target_size=(304, 495)):
     n = float(image.shape[0]) / float(target.shape[1])
     m = float(image.shape[1]) / float(target.shape[2])
     for i, (x, y) in enumerate(corners):
-        if x != 0 and y != 0:
+        if x != -1 and y != -1:
             a = int(x / n)
             b = int(y / m)
             x = np.linspace(-nsig, nsig, kernel)
