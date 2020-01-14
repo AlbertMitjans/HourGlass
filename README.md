@@ -23,11 +23,16 @@ $ bash get_dataset.sh
 
 ## Run test
 
-Evaluates the model on the dataset and saves the resulting images in *output/*.
+Evaluates the model on the dataset.
 
 ```
 $ python3 main.py --train False --ckpt checkpoints/best_ckpt/model.pth
 ```
+As default, for every case, the depth, the output, and the rgb are saved in the *output/* folder.
+
+<p align="center">
+  <img width="900" height="350" src="assets/output.png">
+</p>
 
 **Testing log**
 ```
