@@ -4,9 +4,11 @@ This repo contains the code structure used for the detection of the corners of a
 
 ## Installation
 
-**Clone**
+**Clone and install requirements**  
 ```
 $ git clone https://github.com/AlbertMitjans/pytorch-corner-detection.git
+$ cd pytorch-corner-detection
+$ ???
 ```
 **Download pretrained weights**
 ```
@@ -17,7 +19,7 @@ $ bash get_weights.sh
 ```
 $ cd data/
 $ bash get_dataset.sh
-```
+```  
 
 ## Run test
 
