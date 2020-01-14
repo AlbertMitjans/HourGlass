@@ -23,7 +23,7 @@ $ bash get_dataset.sh
 
 ## Run test
 
-Evaluates the model on the dataset and saves the resulting images in output/.
+Evaluates the model on the dataset and saves the resulting images in *output/*.
 
 ```
 $ python3 main.py --train False --ckpt checkpoints/best_ckpt/model.pth
