@@ -11,5 +11,5 @@ opencv
 pandas
 configargparse
 progress
-tensorflow==1.13.1
+tensorflow==1.15.0
 
