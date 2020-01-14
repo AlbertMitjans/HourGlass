@@ -48,19 +48,22 @@ def corner_mask(output):
     return corners, max_coord
 
 
-def save_img(rgb, output, name):
+def save_img(rgb, output, depth, name):
     corners, max_coord = corner_mask(output)
     rgb, corners = transforms.ToPILImage()(rgb), transforms.ToPILImage()(corners)
     image = Image.blend(rgb, corners, 0.3)
     plt.ioff()
-    fig, ax = plt.subplots(1, 2)
+    fig, ax = plt.subplots(1, 3)
     fig.set_size_inches((15, 6))
+    ax[2].axis('off')
+    ax[2].set_title('RGB image')
     ax[1].axis('off')
-    ax[1].set_title('RGB image')
+    ax[1].set_title('Network\'s output')
     ax[0].axis('off')
-    ax[0].set_title('Network\'s output')
-    ax[0].imshow(output, cmap='afmhot', vmin=0, vmax=1)
-    ax[1].imshow(image)
+    ax[0].set_title('Depth image')
+    ax[0].imshow(depth, cmap='gray', vmin=0.5, vmax=depth.max())
+    ax[1].imshow(output, cmap='afmhot', vmin=0, vmax=1)
+    ax[2].imshow(image)
     Path('output/').mkdir(parents=True, exist_ok=True)
     plt.savefig('output/{image}.png'.format(image=name))
     plt.close('all')

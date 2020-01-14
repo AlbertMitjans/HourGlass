@@ -42,7 +42,7 @@ def test(val_loader, model, save_imgs=False):
             rgb = transforms.ToPILImage()(pad_to_square(rgb)).resize(input.shape[2:])
             rgb = transforms.ToTensor()(rgb)
             # gradient plot
-            save_img(rgb, output[-1].cpu().detach().numpy()[0][0], data['img_name'][0])
+            save_img(rgb, output[-1].cpu().detach().numpy()[0][0], input.cpu().detach().numpy()[0][0], data['img_name'][0])
 
         # measure elapsed time
         batch_time.update(time.time() - end)
