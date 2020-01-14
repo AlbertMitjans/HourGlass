@@ -13,7 +13,7 @@ $ conda activate ENVIRONMENT_NAME
 **Clone and install requirements**  
 ```
 $ git clone https://github.com/AlbertMitjans/pytorch-corner-detection.git
-$ cd pytorch-corner-detection
+$ cd pytorch-corner-detection/
 $ conda install --file requirements.txt
 ```
 **Download pretrained weights**
