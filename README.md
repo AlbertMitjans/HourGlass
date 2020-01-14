@@ -4,11 +4,17 @@ This repo contains the code structure used for the detection of the corners of a
 
 ## Installation
 
+**Create conda environment**
+```
+$ conda create -n ENVIRONMENT_NAME python=3
+$ conda activate ENVIRONMENT_NAME
+```
+
 **Clone and install requirements**  
 ```
 $ git clone https://github.com/AlbertMitjans/pytorch-corner-detection.git
 $ cd pytorch-corner-detection
-$ ???
+$ conda install --file requirements.txt
 ```
 **Download pretrained weights**
 ```
@@ -72,6 +78,10 @@ $ tensorboard --logdir='logs' --port=6006
 2. Capture images to increase the size of the dataset.
 
 In order to work with the encoded images received by the camera, we need to convert them to OpenCV images using the *cv_bridge* package. In python 3, this package is not compatible with rospy, therefore I created [another repository](https://github.com/AlbertMitjans/real-time) which implements this in python 2.
+
+<p align="center">
+  <img width="800" height="300" src="assets/real-time.png">
+</p>
 
 ## Arguments
 --train (default:True) : if True/False, training/testing is implemented.  
