@@ -59,10 +59,12 @@ $ tensorboard --logdir='logs' --port=6006
 ```
 
 
-## Real-time test
-Watch the output of the network in real-time by connecting a depth camera.
+## Real-time display and image capture
+1. Watch the output of the network in real-time by connecting a depth camera.
 
-Go to [this repository](https://github.com/AlbertMitjans/real-time).
+2. Capture images to increase the size of the dataset.
+
+In order to work with the encoded images received by the camera, we need to convert them to OpenCV images using the *cv_bridge* package. In python 3, this package is not compatible with rospy, and thus I created [another repository](https://github.com/AlbertMitjans/real-time) which implements this in python 2.
 
 ## Arguments
 --train (default:True) : if True/False, training/testing is implemented.  
