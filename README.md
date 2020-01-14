@@ -64,7 +64,7 @@ Epoch: [5][300/312]	Loss.avg: 0.3615	Recall(%): 21.622	Precision num. corners (%
 
 Track training progress in Tensorboard:
 + Initialize training
-+ Run the command below
++ Run the command below inside the pytorch-corner-detection directory.
 + Go to [http://localhost:6006/](http://localhost:6006/)
 
 ```
