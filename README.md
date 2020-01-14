@@ -73,6 +73,10 @@ $ tensorboard --logdir='logs' --port=6006
 
 In order to work with the encoded images received by the camera, we need to convert them to OpenCV images using the *cv_bridge* package. In python 3, this package is not compatible with rospy, therefore I created [another repository](https://github.com/AlbertMitjans/real-time) which implements this in python 2.
 
+<p align="center">
+  <img width="800" height="300" src="assets/real-time.png">
+</p>
+
 ## Arguments
 --train (default:True) : if True/False, training/testing is implemented.  
 --val_data (default:True) : if True/False, all/validation data will be evaluated.  
