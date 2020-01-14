@@ -29,7 +29,7 @@ $ python3 main.py --train False --ckpt checkpoints/best_ckpt/model.pth
 
 **Testing log**
 ```
- * Recall(%): 6.250	 * Precision(%):  (6.818, 6.078, 5.191, 7.037)
+ * Recall(%): 67.424	 * Precision(%):  (96.591, 77.652, 30.833, 9.886)
 ```
 
 The precision is computed for the (1, 2, 3, 4) corners detected with highest confidence (the gaussians with a highest value on its center).
