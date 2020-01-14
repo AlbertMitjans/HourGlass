@@ -64,7 +64,7 @@ $ tensorboard --logdir='logs' --port=6006
 
 2. Capture images to increase the size of the dataset.
 
-In order to work with the encoded images received by the camera, we need to convert them to OpenCV images using the *cv_bridge* package. In python 3, this package is not compatible with rospy, and thus I created [another repository](https://github.com/AlbertMitjans/real-time) which implements this in python 2.
+In order to work with the encoded images received by the camera, we need to convert them to OpenCV images using the *cv_bridge* package. In python 3, this package is not compatible with rospy, therefore I created [another repository](https://github.com/AlbertMitjans/real-time) which implements this in python 2.
 
 ## Arguments
 --train (default:True) : if True/False, training/testing is implemented.  
