@@ -1,0 +1,15 @@
+cudatoolkit
+torchvision
+pytorch
+scikit-image
+pillow==6.1
+cython
+matplotlib
+scikit-learn
+tqdm
+opencv
+pandas
+configargparse
+progress
+tensorflow==1.13.1
+
