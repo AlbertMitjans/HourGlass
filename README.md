@@ -42,7 +42,7 @@ As default, for every case, the depth, the output, and the rgb are saved in the 
 
 **Testing log**
 ```
- * Recall(%): 67.424	 * Precision(%):  (96.591, 77.652, 30.833, 9.886)
+* Recall(%): 54.830     * Precision(%):  (97.727, 79.804, 41.202, 14.815)    
 ```
 
 The precision is computed for the (1, 2, 3, 4) corners detected with highest confidence (the gaussians with a highest value on its center).
